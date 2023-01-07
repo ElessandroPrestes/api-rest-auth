@@ -56,4 +56,23 @@ class AuthenticationTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_remember_me_functionality()
+    {
+        Sanctum::actingAs(
+            $user  =  User::factory()->create([
+                'id' => random_int(1, 100),
+                'password' => bcrypt($password = 'eusouinevitavel')
+            ]),
+            ['*']
+        );
+
+        $this->post('/api/login', [
+            'email' => $user->email,
+            'password' => $password,
+            'remember' => 'on',
+        ]);
+
+        $this->assertAuthenticatedAs($user);
+    }
 }

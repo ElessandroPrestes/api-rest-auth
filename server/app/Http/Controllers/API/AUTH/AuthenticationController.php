@@ -41,20 +41,17 @@ class AuthenticationController extends Controller
     {
         try {
 
-            if (!Auth::attempt($request->only(['email', 'password']))) {
+            if (Auth::attempt($request->only(['email', 'password']), $remember = true)) {
+                $request->session()->regenerate();
+
+                $user = User::where('email', $request->email)->first();
+
                 return response()->json([
-                    'status' => false,
-                    'message' => 'Incorrect email or password!',
-                ], 401);
+                    'status' => true,
+                    'message' => 'User logged in successfully!',
+                    'token' => $user->createToken("apiToken")->plainTextToken
+                ], 200);
             }
-
-            $user = User::where('email', $request->email)->first();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'User logged in successfully!',
-                'token' => $user->createToken("apiToken")->plainTextToken
-            ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
