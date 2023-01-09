@@ -20,7 +20,7 @@ class AuthenticationTest extends TestCase
      */
     public function test_login_screen_can_be_rendered(): void
     {
-        $response = $this->get('api/login');
+        $response = $this->get('/api/login');
 
         $response->assertStatus(200);
     }
@@ -30,7 +30,7 @@ class AuthenticationTest extends TestCase
 
         Sanctum::actingAs(
             $user  =  User::factory()->create([
-                'email' => 'thor@marvel.com',
+                'email' => 'thanos@marvel.com',
                 'password' => bcrypt($password = 'eusouinevitavel')
             ]),
             ['*']

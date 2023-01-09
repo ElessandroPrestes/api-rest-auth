@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class RegistrationnTest extends TestCase
+class RegisterTest extends TestCase
 {
     use RefreshDatabase;
     /**

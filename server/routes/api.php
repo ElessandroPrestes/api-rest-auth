@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\API\AUTH\AuthenticationController;
-use App\Http\Controllers\API\AUTH\RegisteredUserController;
+use App\Http\Controllers\API\AUTH\LogoutController;
+use App\Http\Controllers\API\AUTH\RegisterController;
+use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,5 +18,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::apiResource('register', RegisteredUserController::class);
+Route::apiResource('register', RegisterController::class);
 Route::apiResource('login', AuthenticationController::class);
+Route::apiResource('logout', LogoutController::class);
+Route::apiResource('users', UserController::class);
+Route::apiResource('products', ProductController::class);

@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\API\AUTH;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
-class AuthenticationController extends Controller
+class RegisterController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,22 +29,23 @@ class AuthenticationController extends Controller
     public function store(Request $request)
     {
         try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
 
-            if (Auth::attempt($request->only(['email', 'password']), $remember = true)) {
-                $request->session()->regenerate();
 
-                $user = User::where('email', $request->email)->first();
-
-                return response()->json([
-                    'status' => true,
-                    'message' => 'User logged in successfully!',
-                    'token' => $user->createToken("apiToken")->plainTextToken
-                ], 200);
-            }
+            return response()->json([
+                'status' => true,
+                'user' =>  new UserResource($user),
+                'message' => 'Retrieved successfully',
+                'token' => $user->createToken("apiToken")->plainTextToken
+            ], 200);
         } catch (\Throwable $th) {
             return response()->json([
-                'status' => false,
-                'message' => $th->getMessage()
+                'status' =>  false,
+                'message' => $th->getMessage(),
             ], 500);
         }
     }
