@@ -15,15 +15,22 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(15);
 
-        return response(
-            [
-                'users' => UserResource::collection($users),
-                'message' => 'Retrieved Successfully'
-            ],
-            200
-        );
+        try {
+            $users = User::paginate(15);
+
+            return response(
+                [
+                    'users' => UserResource::collection($users),
+                    'message' => 'Successfully listed'
+                ],
+                200
+            );
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -45,7 +52,19 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        try {
+            return response(
+                [
+                    'user' => new UserResource($user),
+                    'message' => 'User successfully listed'
+                ],
+                200
+            );
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**

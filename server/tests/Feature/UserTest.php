@@ -16,7 +16,7 @@ class UserTest extends TestCase
      *
      * @return void
      */
-    public function test_user_listed_successfully()
+    public function test_user_index_successfully()
     {
         Sanctum::actingAs(
             $user  =  User::factory()->create([
@@ -68,7 +68,36 @@ class UserTest extends TestCase
                         "profile" => $user2->profile
                     ]
                 ],
-                'message' => 'Retrieved Successfully'
+                'message' => 'Successfully listed'
             ]);
+    }
+
+    public function test_user_is_shown_Correctly()
+    {
+        Sanctum::actingAs(
+            $user4  =  User::factory()->create([
+                "id" => "4",
+                "name" => "Admin4",
+                "email" => "admin4@marvel.com",
+                "password" => "admin@123",
+                "profile" => "Adminstrator"
+            ]),
+            ['*']
+        );
+
+
+        $this->getJson("/api/users/$user4->id")
+            ->assertStatus(200)
+            ->assertExactJson(
+                [
+                    'user' => [
+                        'id' => $user4->id,
+                        'name' => $user4->name,
+                        'email'  => $user4->email,
+                        'profile' => $user4->profile
+                    ],
+                    'message' => 'User successfully listed'
+                ]
+            );
     }
 }
