@@ -75,8 +75,8 @@ class UserTest extends TestCase
     public function test_user_is_shown_Correctly()
     {
         Sanctum::actingAs(
-            $user4  =  User::factory()->create([
-                "id" => "4",
+            $user  =  User::factory()->create([
+                "id" => "1",
                 "name" => "Admin4",
                 "email" => "admin4@marvel.com",
                 "password" => "admin@123",
@@ -86,15 +86,15 @@ class UserTest extends TestCase
         );
 
 
-        $this->getJson("/api/users/$user4->id")
+        $this->getJson("/api/users/$user->id")
             ->assertStatus(200)
             ->assertExactJson(
                 [
                     'user' => [
-                        'id' => $user4->id,
-                        'name' => $user4->name,
-                        'email'  => $user4->email,
-                        'profile' => $user4->profile
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email'  => $user->email,
+                        'profile' => $user->profile
                     ],
                     'message' => 'User successfully listed'
                 ]
@@ -104,8 +104,8 @@ class UserTest extends TestCase
     public function testUpdateUserReturnsCorrectData()
     {
         Sanctum::actingAs(
-            $user5  =  User::factory()->create([
-                "id" => "5",
+            $user  =  User::factory()->create([
+                "id" => "1",
                 "name" => "Admin5",
                 "email" => "Admin5@marvel.com",
                 "password" => "admin@123",
@@ -120,12 +120,12 @@ class UserTest extends TestCase
             'email'      => 'Admin5@marvel.com'
         ];
 
-        $this->putJson("api/users/$user5->id", $payload)
+        $this->putJson("/api/users/$user->id", $payload)
             ->assertStatus(200)
             ->assertExactJson(
                 [
                     'user' => [
-                        'id'         => $user5->id,
+                        'id'         => $user->id,
                         'name'  => $payload['name'],
                         'email'      => $payload['email'],
                         'profile'      => 'Adminstrator',
@@ -134,5 +134,30 @@ class UserTest extends TestCase
                     'message' => 'User updated successfully'
                 ]
             );
+    }
+
+    public function test_user_is_destroyed()
+    {
+
+        Sanctum::actingAs(
+            $user  =  User::factory()->create([
+                "id" => "1",
+                "name" => "Admin6",
+                "email" => "Admin6@marvel.com",
+                "password" => "admin@123",
+                "profile" => "Adminstrator"
+            ]),
+            ['*']
+        );
+
+
+        $userData = [
+            'name'  => 'Thanos',
+            'email'      => 'thanos@marvel.com'
+        ];
+
+        $this->json('delete', "/api/users/$user->id", [])
+            ->assertNoContent();
+        $this->assertDatabaseMissing('users', $userData);
     }
 }
