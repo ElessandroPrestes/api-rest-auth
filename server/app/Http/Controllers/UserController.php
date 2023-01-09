@@ -76,7 +76,20 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        try {
+            $user->update($request->all());
+            return response(
+                [
+                    'user' => new UserResource($user),
+                    'message' => 'User updated successfully'
+                ],
+                200
+            );
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
